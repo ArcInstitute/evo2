@@ -2,7 +2,7 @@
 
 </div>
 
-Evo 2 is a state of the art DNA language model for long context modeling and design. Evo 2 uses the [Striped Hyena 2](https://github.com/Zymrael/vortex) architecture and is pretrained using [Savanna](https://github.com/Zymrael/savanna) on 2048 GPUs. Evo 2 models DNA sequences at single-nucleotide resolution at up to 1 million base pair context length. Evo 2 is trained autoregressively on [OpenGenome2](https://huggingface.co/datasets/arcinstitute/opengenome2), a dataset containing 8.8 trillion tokens from all domains of life.
+Evo 2 is a state of the art DNA language model for long context modeling and design. Evo 2 uses the [StripedHyena 2](https://github.com/Zymrael/vortex) architecture and is pretrained using [Savanna](https://github.com/Zymrael/savanna) on 2048 GPUs. Evo 2 models DNA sequences at single-nucleotide resolution at up to 1 million base pair context length. Evo 2 is trained autoregressively on [OpenGenome2](https://huggingface.co/datasets/arcinstitute/opengenome2), a dataset containing 8.8 trillion tokens from all domains of life.
 
 We describe Evo 2 in the preprint:
 ["Genome modeling and design across all domains of life with Evo 2"]().
@@ -23,7 +23,7 @@ We describe Evo 2 in the preprint:
 
 ### Requirements
 
-Evo 2 is based on [Striped Hyena 2](https://github.com/Zymrael/vortex). A CUDA-capable system is required to build and install the prerequisites. Evo 2 uses [FlashAttention-2](https://github.com/Dao-AILab/flash-attention), which may not work on all GPU architectures. Please consult the [FlashAttention GitHub repository](https://github.com/Dao-AILab/flash-attention#installation-and-features) for the current list of supported GPUs. 
+Evo 2 is based on [StripedHyena 2](https://github.com/Zymrael/vortex). A CUDA-capable system is required to build and install the prerequisites. Evo 2 uses [FlashAttention](https://github.com/Dao-AILab/flash-attention), which may not work on all GPU architectures. Please consult the [FlashAttention GitHub repository](https://github.com/Dao-AILab/flash-attention#installation-and-features) for the current list of supported GPUs. 
 
 ### Installation
 
