@@ -7,12 +7,20 @@ from setuptools.command.develop import develop as _develop
 from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 
 def run_make_setup_full():
-    vortex_dir = os.path.join(os.path.dirname(__file__), 'vortex')
+    base_dir = os.path.dirname(__file__)
+    vortex_dir = os.path.join(base_dir, 'vortex')
     original_dir = os.getcwd()
+    
+    # If we're in a git repository, update submodules
+    if os.path.exists(os.path.join(base_dir, '.git')):
+        print("Updating git submodules...")
+        subprocess.check_call(['git', 'submodule', 'update', '--init', '--recursive'], cwd=base_dir)
+    
     # Ensure the Makefile uses the current Python interpreter
     env = os.environ.copy()
     env["PYTHON"] = sys.executable
     print(f"Running 'make setup-full' in {vortex_dir} with PYTHON={sys.executable} ...")
+    
     try:
         os.chdir(vortex_dir)
         subprocess.check_call(['make', 'setup-full'], env=env)
@@ -21,7 +29,6 @@ def run_make_setup_full():
 
 class CustomBuildPy(_build_py):
     def run(self):
-        # Ensure egg metadata is generated
         self.run_command('egg_info')
         run_make_setup_full()
         super().run()
@@ -63,5 +70,5 @@ setup(
     license="Apache-2.0",
     description='Evo 2 project package',
     author='Evo 2 team',
-    url='https://github.com/arcinstitute/evo2',
+    url='https://github.com/garykbrixi/evo2',
 )
