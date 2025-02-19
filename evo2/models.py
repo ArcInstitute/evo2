@@ -233,7 +233,7 @@ class Evo2:
         config = yaml.safe_load(pkgutil.get_data(__name__, config_path))
         global_config = dotdict(config, Loader=yaml.FullLoader)
 
-        model = StripedHyena(config)
+        model = StripedHyena(global_config)
         load_checkpoint(model, weights_path)
 
         return model
