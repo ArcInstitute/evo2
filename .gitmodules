@@ -1,6 +1,3 @@
-[submodule "savanna"]
-	path = savanna
-	url = git@github.com:Zymrael/savanna.git
 [submodule "vortex"]
 	path = vortex
 	url = https://github.com/Zymrael/vortex.git
