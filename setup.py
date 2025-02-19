@@ -6,6 +6,7 @@ from setuptools.command.build import build as _build  # use the top-level build 
 from setuptools.command.develop import develop as _develop
 from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 
+
 def update_submodules():
     base_dir = os.path.dirname(__file__)
     # Check if the .git folder exists
@@ -65,11 +66,18 @@ def parse_requirements(filename):
                 requirements.append(line)
     return requirements
 
+
+with open('evo2/version.py') as infile:
+    exec(infile.read())
+
+with open('README.md') as f:
+    readme = f.read()
+
 requirements = parse_requirements("requirements.txt")
 
 setup(
     name='evo2',
-    version='0.1.0',
+    version=version,
     # Only include the evo2 package; the vortex submodule is used for build purposes.
     packages=find_packages(include=["evo2", "vortex/vortex"]),
     install_requires=requirements,
@@ -78,10 +86,11 @@ setup(
         'develop': CustomDevelop,
         'bdist_wheel': CustomBDistWheel,
     },
+    package_data={'evo2': ['evo2/configs/*.yml']},
     include_package_data=True,
-    python_requires='>=3.1',
+    python_requires='>=3.6',
     license="Apache-2.0",
-    description='Evo 2 project package',
-    author='Evo 2 team',
-    url='https://github.com/garykbrixi/evo2',
+    description='Genome modeling across all domains of life',
+    author='Team Evo 2',
+    url='https://github.com/arcinstitute/evo2',
 )

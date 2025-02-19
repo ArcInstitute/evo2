@@ -1,0 +1,63 @@
+model_name: shc-evo2-40b-8k-11T-v2
+
+vocab_size: 512
+hidden_size: 8192
+num_filters: 8192
+hcl_layer_idxs: [2,6,9,13,16,20,23,27,30,34,38,41,45,48]
+hcm_layer_idxs: [1,5,8,12,15,19,22,26,29,33,37,40,44,47]
+hcs_layer_idxs: [0,4,7,11,14,18,21,25,28,32,36,39,43,46]
+attn_layer_idxs: [3,10,17,24,31,35,42,49]
+hcm_filter_length: 128
+hcl_filter_groups: 8192
+hcm_filter_groups: 512
+hcs_filter_groups: 512
+hcs_filter_length: 7
+num_layers: 50
+
+# Length of the short, depthwise FIR applied to input projections
+short_filter_length: 3 
+num_attention_heads: 64
+short_filter_bias: false # add bias to FIR
+mlp_init_method: torch.nn.init.zeros_
+mlp_output_init_method: torch.nn.init.zeros_
+eps: 0.000001
+state_size: 16
+rotary_emb_base: 1000000 
+make_vocab_size_divisible_by: 8
+inner_size_multiple_of: 128  # force GLU inner_size to be a multiple of
+inner_mlp_size: 21888
+log_intermediate_values: False
+# Number of groups in GQA
+proj_groups: 1
+# Number of groups in grouped 
+hyena_filter_groups: 1
+# Split strategy for channels
+column_split_hyena: False
+column_split: True
+interleave: True
+# Layer > 0 nn.identity activation
+evo2_style_activations: True
+
+use_fp8_input_projections: True
+
+# Legacy options for MP / PP inference
+model_parallel_size: 1
+pipe_parallel_size: 1
+tie_embeddings: True
+mha_out_proj_bias: True
+hyena_out_proj_bias: True
+hyena_flip_x1x2: False
+qkv_proj_bias: False
+max_seqlen: 8192
+max_batch_size: 1
+final_norm: True 
+use_flash_attn: True
+use_flash_rmsnorm: False
+use_flash_depthwise: False
+use_flashfft: False
+use_laughing_hyena: False
+inference_mode: True
+tokenizer_type: CharLevelTokenizer 
+prefill_style: fft
+mlp_activation: gelu
+print_activations: False

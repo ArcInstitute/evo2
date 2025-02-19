@@ -1,6 +1,4 @@
-# Evo 2: DNA modeling and design across all life's domains
-
-</div>
+# Evo 2: Genome modeling and design across all domains of life
 
 Evo 2 is a state of the art DNA language model for long context modeling and design. Evo 2 models DNA sequences at single-nucleotide resolution at up to 1 million base pair context length using the [StripedHyena 2](https://github.com/Zymrael/vortex) architecture. Evo 2 was pretrained using [Savanna](https://github.com/Zymrael/savanna). Evo 2 was trained autoregressively on [OpenGenome2](https://huggingface.co/datasets/arcinstitute/opengenome2), a dataset containing 8.8 trillion tokens from all domains of life.
 
@@ -36,7 +34,7 @@ Please clone and install from GitHub. We recommend using a conda environment wit
 ```bash
 git clone --recurse-submodules git@github.com:ArcInstitute/evo2.git
 cd evo2
-pip install -v .
+pip install .
 ```
 
 If this did not work for whatever reason, you can also install from [Vortex](https://github.com/Zymrael/vortex) and follow the instructions there. PyPi support coming soon!
@@ -150,9 +148,8 @@ If you find these models useful for your research, please cite the relevant pape
 @article{brixi2025genome,
   title = {Genome modeling and design across all domains of life with Evo 2},
   author = {Brixi, Garyk and Durrant, Matthew G. and Ku, Jerome and Poli, Michael and Brockman, Greg and Chang, Daniel and Gonzalez, Gabriel A. and King, Samuel H. and Li, David B. and Merchant, Aditi T. and Naghipourfar, Mohsen and Nguyen, Eric and Ricci-Tam, Chiara and Romero, David W. and Sun, Gwanggyu and Taghibakshi, Ali and Vorontsov, Anton and Yang, Brandon and Deng, Myra and Gorton, Liv and Nguyen, Nam and Wang, Nicholas K. and Adams, Etowah and Baccus, Stephen A. and Dillmann, Steven and Ermon, Stefano and Guo, Daniel and Ilango, Rajesh and Janik, Ken and Lu, Amy X. and Mehta, Reshma and Mofrad, Mohammad R.K. and Ng, Madelena Y. and Pannu, Jaspreet and Ré, Christopher and Schmok, Jonathan C. and St. John, John and Sullivan, Jeremy and Zhu, Kevin and Zynda, Greg and Balsam, Daniel and Collison, Patrick and Costa, Anthony B. and Hernandez-Boussard, Tina and Ho, Eric and Liu, Ming-Yu and McGrath, Thomas and Powell, Kimberly and Burke, Dave P. and Goodarzi, Hani and Hsu, Patrick D. and Hie, Brian L.},
-  journal = {Evo 2},
+  journal = {Arc Institute Manuscripts},
   year = {2025},
-  url = {https://arcinstitute.org/manuscripts/Evo2},
-  note = {Accessed: 2025-02-19}
+  url = {https://arcinstitute.org/manuscripts/Evo2}
 }
 ```
