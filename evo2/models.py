@@ -6,6 +6,8 @@ import yaml
 import os
 from typing import List, Tuple, Dict, Union
 from functools import partial
+import pkgutil
+
 
 from vortex.model.generation import generate as vortex_generate
 from vortex.model.model import StripedHyena
@@ -217,7 +219,10 @@ class Evo2:
                         print(f"Error removing {part}: {e}")
                     print("Cleaned up shards, final checkpoint saved to", weights_path)
 
-        config = dotdict(yaml.load(open(config_path), Loader=yaml.FullLoader))
+        config = dotdict(yaml.load(
+            open(pkgutil.get_data(__name__, config_path)),
+            Loader=yaml.FullLoader,
+        ))
         model = StripedHyena(config)
         load_checkpoint(model, weights_path)
         return model
