@@ -15,9 +15,9 @@ HF_MODEL_NAME_MAP = {
 }
 
 CONFIG_MAP = {
-    'evo2_7b': 'evo2/configs/evo2-7b-1m.yml',
-    'evo2_40b': 'evo2/configs/evo2-40b-1m.yml',
-    'evo2_7b_base': 'evo2/configs/evo2-7b-8k.yml',
-    'evo2_40b_base': 'evo2/configs/evo2-40b-8k.yml',
-    'evo2_1b_base': 'evo2/configs/evo2-1b-8k.yml',
+    'evo2_7b': 'configs/evo2-7b-1m.yml',
+    'evo2_40b': 'configs/evo2-40b-1m.yml',
+    'evo2_7b_base': 'configs/evo2-7b-8k.yml',
+    'evo2_40b_base': 'configs/evo2-40b-8k.yml',
+    'evo2_1b_base': 'configs/evo2-1b-8k.yml',
 }
