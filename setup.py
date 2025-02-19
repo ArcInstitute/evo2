@@ -91,6 +91,8 @@ setup(
     python_requires='>=3.6',
     license="Apache-2.0",
     description='Genome modeling across all domains of life',
+    long_description=readme,
+    long_description_content_type='text/markdown',
     author='Team Evo 2',
     url='https://github.com/arcinstitute/evo2',
 )
