@@ -85,8 +85,8 @@ setup(
         'install': CustomInstall,
         'install_vortex': VortexInstallCommand,
     },
-    package_data={
-        'evo2': ['vortex/*'],
+    package_dir={
+        'vortex': 'vortex/vortex',
     },
     include_package_data=True,
     python_requires='>=3.1',
