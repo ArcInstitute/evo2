@@ -18,14 +18,9 @@ class VortexInstallCommand(Command):
     def run(self):
         vortex_dir = os.path.join(os.path.dirname(__file__), 'vortex')
         original_dir = os.getcwd()
-        subprocess.check_call(['git', 'submodule', 'init', 'vortex'])
-        subprocess.check_call(['git', 'submodule', 'update', 'vortex'])
-        
-        try:
-            os.chdir(vortex_dir)
-            subprocess.check_call(['make', 'setup-full'])
-        finally:
-            os.chdir(original_dir)
+        os.chdir(vortex_dir)
+        subprocess.check_call(['make', 'setup-full'])
+        os.chdir(original_dir)
 
 
 class CustomInstall(install):
