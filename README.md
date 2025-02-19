@@ -31,17 +31,18 @@ Evo 2 is based on [StripedHyena 2](https://github.com/Zymrael/vortex). A CUDA-ca
 
 ### Installation
 
-Follow the commands below to install. We recommend using a new conda environment with python 3.12.
+Please install directly from GitHub. We recommend using a new conda environment with python 3.12.
 
 ```bash
-git clone git@github.com:ArcInstitute/evo2.git && cd evo2
+git clone git@github.com:ArcInstitute/evo2.git
+cd evo2
 pip install .
 ```
 
-After installation, check that the installation was correct by running a test
+You can check that the installation was correct by running a test.
 
 ```
-python -m test.test_evo2 --model_name evo2_7b
+python ./test/test_evo2.py --model_name evo2_7b
 ```
 
 ## Checkpoints
