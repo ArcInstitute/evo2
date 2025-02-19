@@ -88,7 +88,7 @@ setup(
     },
     package_data={'evo2': ['evo2/configs/*.yml']},
     include_package_data=True,
-    python_requires='>=3.6',
+    python_requires='>=3.11',
     license="Apache-2.0",
     description='Genome modeling across all domains of life',
     long_description=readme,
