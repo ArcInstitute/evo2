@@ -1,12 +1,11 @@
-import torch
-
+from functools import partial
 import huggingface_hub
 from huggingface_hub import hf_hub_download, constants
-import yaml
 import os
-from typing import List, Tuple, Dict, Union
-from functools import partial
 import pkgutil
+import torch
+from typing import List, Tuple, Dict, Union
+import yaml
 
 
 from vortex.model.generation import generate as vortex_generate
@@ -25,12 +24,15 @@ class Evo2:
         Uses local_path if specified, otherwise checks if in local HuggingFace ~cache.
         Automatically downloads checkpoint from HuggingFace if it does not exist locally.
 
-        Vortex automatically handles device placement on CUDA, and splits model across multiple GPUs if available.
-        For models split across multiple GPUs, you can specify which GPUs to use with CUDA_VISIBLE_DEVICES. If using multi-gpu, do not use .to(device) manually.
+        Vortex automatically handles device placement on CUDA, and splits model across
+        multiple GPUs if available.
+        For models split across multiple GPUs, you can specify which GPUs to use with
+        CUDA_VISIBLE_DEVICES. If using multi-gpu, do not use .to(device) manually.
 
         Notes:
         Evo 2 40b is too large to fit on a single H100 GPU, so needs multiple GPUs.
-        You can change where HuggingFace downloads to by setting the HF_HOME environment variable.
+        You can change where HuggingFace downloads to by setting the HF_HOME environment
+        variable.
         """
         if model_name not in MODEL_NAMES:
             raise ValueError(
@@ -47,14 +49,20 @@ class Evo2:
         
         self.tokenizer = CharLevelTokenizer(512)
     
-    def forward(self, input_ids, return_embeddings=False, layer_names=None):
+    def forward(
+        self,
+        input_ids: torch.Tensor,
+        return_embeddings: bool = False,
+        layer_names=None,
+    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         """
         Forward pass with optional embedding extraction.
         
         Args:
             input_ids: Input token IDs
             return_embeddings: If True, returns embeddings from specified layers
-            layer_names: List of layer names to extract embeddings from. Required if return_embeddings=True
+            layer_names: List of layer names to extract embeddings from. Required if
+                return_embeddings=True
             
         Returns:
             Tuple of (logits, embeddings_dict) if return_embeddings=True
@@ -65,7 +73,10 @@ class Evo2:
         
         if return_embeddings:
             if layer_names is None:
-                raise ValueError("layer_names must be specified when return_embeddings=True. Look at evo2_model.model.state_dict().keys() to see available layers.")
+                raise ValueError(
+                    "layer_names must be specified when return_embeddings=True. Look at "
+                    "evo2_model.model.state_dict().keys() to see available layers."
+                )
                 
             def hook_fn(layer_name):
                 def hook(_, __, output):
@@ -96,12 +107,12 @@ class Evo2:
         return self.forward(input_ids, return_embeddings, layer_names)
 
     def score_sequences(
-            self,
-            seqs: List[str],
-            batch_size: int = 1,
-            prepend_bos: bool = False,
-            reduce_method: str = 'mean',
-            average_reverse_complement: bool = False,
+        self,
+        seqs: List[str],
+        batch_size: int = 1,
+        prepend_bos: bool = False,
+        reduce_method: str = 'mean',
+        average_reverse_complement: bool = False,
     ) -> List[float]:
         scoring_func = partial(
             score_sequences_rc if average_reverse_complement else score_sequences,
@@ -219,10 +230,10 @@ class Evo2:
                         print(f"Error removing {part}: {e}")
                     print("Cleaned up shards, final checkpoint saved to", weights_path)
 
-        config = dotdict(yaml.load(
-            open(pkgutil.get_data(__name__, config_path)),
-            Loader=yaml.FullLoader,
-        ))
+        config = yaml.safe_load(pkgutil.get_data(__name__, config_path))
+        global_config = dotdict(config, Loader=yaml.FullLoader)
+
         model = StripedHyena(config)
         load_checkpoint(model, weights_path)
+
         return model
