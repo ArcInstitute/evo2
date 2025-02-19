@@ -1,69 +1,40 @@
 import os
 import subprocess
-from setuptools import setup, find_packages, Command
-from setuptools.command.install import install
-from distutils.dir_util import mkpath
+import sys
+from setuptools import setup, find_packages
+from setuptools.command.build_py import build_py as _build_py
+from setuptools.command.develop import develop as _develop
+from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 
-class VortexInstallCommand(Command):
-    description = 'Install vortex submodule'
-
-    def initialize_options(self):
-        """Set default values for options"""
-        pass
-    
-    def finalize_options(self):
-        """Post-process options"""
-        pass
-    
-    def run(self):
-        vortex_dir = os.path.join(os.path.dirname(__file__), 'vortex')
-        original_dir = os.getcwd()
+def run_make_setup_full():
+    vortex_dir = os.path.join(os.path.dirname(__file__), 'vortex')
+    original_dir = os.getcwd()
+    # Ensure the Makefile uses the current Python interpreter
+    env = os.environ.copy()
+    env["PYTHON"] = sys.executable
+    print(f"Running 'make setup-full' in {vortex_dir} with PYTHON={sys.executable} ...")
+    try:
         os.chdir(vortex_dir)
-        subprocess.check_call(['make', 'setup-full'])
+        subprocess.check_call(['make', 'setup-full'], env=env)
+    finally:
         os.chdir(original_dir)
 
-
-class CustomInstall(install):
+class CustomBuildPy(_build_py):
     def run(self):
-        # Create necessary directories
-        if self.build_lib:
-            mkpath(os.path.join(self.build_lib, 'evo2'))
-        if hasattr(self, 'build_scripts'):
-            mkpath(self.build_scripts)
-        install.run(self)
-        self.run_command('install_vortex')
+        # Ensure egg metadata is generated
+        self.run_command('egg_info')
+        run_make_setup_full()
+        super().run()
 
-
-import os
-import subprocess
-import sys
-from setuptools import setup, find_packages, Command
-from setuptools.command.install import install
-
-class VortexInstallCommand(Command):
-    description = 'Install vortex submodule'
-
-    def initialize_options(self):
-        """Set default values for options"""
-        pass
-    
-    def finalize_options(self):
-        """Post-process options"""
-        pass
-    
+class CustomDevelop(_develop):
     def run(self):
-        vortex_dir = os.path.join(os.path.dirname(__file__), 'vortex')
-        original_dir = os.getcwd()
-        try:
-            os.chdir(vortex_dir)
-            subprocess.check_call(['make', 'setup-full'])
-        finally:
-            os.chdir(original_dir)
+        run_make_setup_full()
+        super().run()
 
-class CustomInstall(install):
+class CustomBDistWheel(_bdist_wheel):
     def run(self):
-        install.run(self)
-        self.run_command('install_vortex')
+        self.run_command('egg_info')
+        super().run()
 
 def parse_requirements(filename):
     requirements = []
@@ -79,11 +50,13 @@ requirements = parse_requirements("requirements.txt")
 setup(
     name='evo2',
     version='0.1.0',
-    packages=find_packages(),
+    # Include only the evo2 package (exclude the vortex submodule)
+    packages=find_packages(include=["evo2", "evo2.*"]),
     install_requires=requirements,
     cmdclass={
-        'install': CustomInstall,
-        'install_vortex': VortexInstallCommand,
+        'build_py': CustomBuildPy,
+        'develop': CustomDevelop,
+        'bdist_wheel': CustomBDistWheel,
     },
     include_package_data=True,
     python_requires='>=3.1',

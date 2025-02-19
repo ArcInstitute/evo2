@@ -5,7 +5,7 @@
 Evo 2 is a state of the art DNA language model for long context modeling and design. Evo 2 models DNA sequences at single-nucleotide resolution at up to 1 million base pair context length using the [StripedHyena 2](https://github.com/Zymrael/vortex) architecture. Evo 2 was pretrained using [Savanna](https://github.com/Zymrael/savanna). Evo 2 was trained autoregressively on [OpenGenome2](https://huggingface.co/datasets/arcinstitute/opengenome2), a dataset containing 8.8 trillion tokens from all domains of life.
 
 We describe Evo 2 in the preprint:
-["Genome modeling and design across all domains of life with Evo 2"]().
+["Genome modeling and design across all domains of life with Evo 2"](https://arcinstitute.org/manuscripts/Evo2).
 
 ## Contents
 
