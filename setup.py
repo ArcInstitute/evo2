@@ -85,9 +85,6 @@ setup(
         'install': CustomInstall,
         'install_vortex': VortexInstallCommand,
     },
-    package_dir={
-        'vortex': 'vortex/vortex',
-    },
     include_package_data=True,
     python_requires='>=3.1',
     license="Apache-2.0",
