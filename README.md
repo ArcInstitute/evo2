@@ -32,6 +32,8 @@ Evo 2 is based on [StripedHyena 2](https://github.com/Zymrael/vortex) which requ
 
 You can also run Evo 2 without any installation using the [Nvidia Hosted API](https://build.nvidia.com/arc/evo2-40b).
 
+If your local machine does not support running the model, you can deploy Evo 2 using NVIDIA NIM and use a hosted API. See the [NVIDIA NIM](#nvidia-nim-for-evo-2) section for more information.
+
 ### Installation
 
 Please clone and install from GitHub. We recommend using a new conda environment with python>=3.11.
@@ -129,10 +131,9 @@ print(output.sequences[0])
 
 ### NVIDIA NIM for Evo 2
 
-Evo 2 is available on [NVIDIA NIM](https://catalog.ngc.nvidia.com/containers?filters=&orderBy=scoreDESC&query=evo2&page=&pageSize=) for easy use without any installation.
+Evo 2 is available on [NVIDIA NIM](https://catalog.ngc.nvidia.com/containers?filters=&orderBy=scoreDESC&query=evo2&page=&pageSize=).
 
 - [Documentation](https://docs.nvidia.com/nim/bionemo/evo2/latest/overview.html)
-- [Prerequisites](https://docs.nvidia.com/nim/bionemo/evo2/latest/prerequisites.html)
 - [Quickstart](https://docs.nvidia.com/nim/bionemo/evo2/latest/quickstart-guide.html)
 
 The quickstart guides users through running Evo 2 on the NVIDIA NIM using a python or shell client after starting NIM. An example python client script is shown below.
