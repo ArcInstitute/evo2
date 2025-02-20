@@ -32,7 +32,7 @@ Evo 2 is based on [StripedHyena 2](https://github.com/Zymrael/vortex) which requ
 
 You can also run Evo 2 without any installation using the [Nvidia Hosted API](https://build.nvidia.com/arc/evo2-40b).
 
-If your local machine does not support running the model, you can deploy Evo 2 using NVIDIA NIM and use a hosted API. See the [NVIDIA NIM](#nvidia-nim-for-evo-2) section for more information.
+To host your own instance for running Evo 2, we recommend using NVIDIA NIM. See the [NVIDIA NIM](#nvidia-nim-for-evo-2) section for more information.
 
 ### Installation
 
