@@ -127,6 +127,35 @@ output = evo2_model.generate(prompt_seqs=["ACGT"], n_tokens=400, temperature=1.0
 print(output.sequences[0])
 ```
 
+### NVIDIA NIM for Evo 2
+
+Evo 2 is available on [NVIDIA NIM](https://catalog.ngc.nvidia.com/containers?filters=&orderBy=scoreDESC&query=evo2&page=&pageSize=) for easy use without any installation.
+
+- [Documentation](https://docs.nvidia.com/nim/bionemo/evo2/latest/overview.html)
+- [Quickstart](https://docs.nvidia.com/nim/bionemo/evo2/latest/quickstart-guide.html)
+
+The quickstart guides users through running Evo 2 on the NVIDIA NIM using python or shell client after starting NIM. An example shell script is shown below.
+
+```python
+#!/usr/bin/env python3
+import requests
+import os
+import json
+from pathlib import Path
+
+r = requests.post(
+    url="http://localhost:8000/biology/arc/evo2/generate",
+    json={
+        "sequence": "ACTGACTGACTGACTG",
+        "num_tokens": 8,
+        "top_k": 1,
+        "enable_sampled_probs": True,
+    },
+)
+print(r, "Saving to output.json:\n", r.text[:200], "...")
+Path("output.json").write_text(r.text)
+```
+
 ### Notebooks
 
 We provide an example [notebook](https://github.com/ArcInstitute/evo2/blob/main/notebooks/brca1/brca1_zero_shot_vep.ipynb) of zero-shot *BRCA1* variant effect prediction. This example includes a walkthrough of:
