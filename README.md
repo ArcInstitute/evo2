@@ -134,7 +134,7 @@ Evo 2 is available on [NVIDIA NIM](https://catalog.ngc.nvidia.com/containers?fil
 - [Documentation](https://docs.nvidia.com/nim/bionemo/evo2/latest/overview.html)
 - [Quickstart](https://docs.nvidia.com/nim/bionemo/evo2/latest/quickstart-guide.html)
 
-The quickstart guides users through running Evo 2 on the NVIDIA NIM using python or shell client after starting NIM. An example shell script is shown below.
+The quickstart guides users through running Evo 2 on the NVIDIA NIM using python or shell client after starting NIM. An example python client script is shown below.
 
 ```python
 #!/usr/bin/env python3
