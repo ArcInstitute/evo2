@@ -137,6 +137,10 @@ We provide an example [notebook](https://github.com/ArcInstitute/evo2/blob/main/
 - Performing zero-shot *BRCA1* variant effect predictions using Evo 2
 - Reference vs alternative allele normalization
 
+### Appreciations
+
+Great to have a project on evolution.
+
 ### NVIDIA NIM for Evo 2
 
 Evo 2 is available on [NVIDIA NIM](https://catalog.ngc.nvidia.com/containers?filters=&orderBy=scoreDESC&query=evo2&page=&pageSize=).
