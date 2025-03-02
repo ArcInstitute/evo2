@@ -45,6 +45,20 @@ pip install .
 
 If this did not work for whatever reason, you can also install from [Vortex](https://github.com/Zymrael/vortex) and follow the instructions there. PyPi support coming soon!
 
+For HPC users, it is important to ensure cuda-nvcc is installed in the machine. An example code to install cuda-nvcc=12.4 is:
+
+```
+conda install -y -c nvidia cuda=12.4 cuda-tools=12.4 cuda-toolkit=12.4 cuda-version=12.4 cuda-command-line-tools=12.4 cuda-compiler=12.4 cuda-runtime=12.4
+```
+
+And you need to specify the nvcc-cuda path, if it is not under usr/local:
+
+```
+export CUDA_HOME=<your path>
+```
+
+A conda environment file (yml) is also provided in the code base.
+
 You can check that the installation was correct by running a test.
 
 ```
