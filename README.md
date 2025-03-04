@@ -18,6 +18,7 @@ We describe Evo 2 in the preprint:
   - [Embeddings](#embeddings)
   - [Generation](#generation)
   - [Notebooks](#notebooks)
+  - [Nvidia NIM](#nvidia-nim)
 - [Dataset](#dataset)
 - [Training Code](#dataset)
 - [Citation](#citation)
@@ -66,7 +67,7 @@ To use Evo 2 40B, you will need multiple GPUs. Vortex automatically handles devi
 
 ## Usage
 
-Below are simple examples of how to download Evo 2 and use it locally using Python.
+Below are simple examples of how to download Evo 2 and use it locally in Python.
 
 ### Forward
 
@@ -93,7 +94,7 @@ print('Shape (batch, length, vocab): ', logits.shape)
 
 ### Embeddings
 
-Evo 2 embeddings can be saved for use downstream.
+Evo 2 embeddings can be saved for use downstream. We find that intermediate embeddings work better than final embeddings, see our paper for details.
 
 ```python
 import torch
@@ -130,13 +131,19 @@ print(output.sequences[0])
 
 ### Notebooks
 
-We provide an example [notebook](https://github.com/ArcInstitute/evo2/blob/main/notebooks/brca1/brca1_zero_shot_vep.ipynb) of zero-shot *BRCA1* variant effect prediction. This example includes a walkthrough of:
+We provide example notebooks.
+
+The [BRCA1 notebook](https://github.com/ArcInstitute/evo2/blob/main/notebooks/brca1/brca1_zero_shot_vep.ipynb) shows zero-shot *BRCA1* variant effect prediction. This example includes a walkthrough of:
 - Performing zero-shot *BRCA1* variant effect predictions using Evo 2
 - Reference vs alternative allele normalization
 
-### NVIDIA NIM for Evo 2
+The [generation notebook](https://github.com/ArcInstitute/evo2/blob/main/notebooks/generation/generation_notebook.ipynb) shows DNA sequence completion with Evo 2. This example shows:
+- DNA prompt based generation and 'DNA autocompletion'
+- How to get and prompt using phylogenetic species tags for generation
 
-Evo 2 is available on [NVIDIA NIM](https://catalog.ngc.nvidia.com/containers?filters=&orderBy=scoreDESC&query=evo2&page=&pageSize=).
+### Nvidia NIM
+
+Evo 2 is available on [Nvidia NIM](https://catalog.ngc.nvidia.com/containers?filters=&orderBy=scoreDESC&query=evo2&page=&pageSize=) and [hosted API](https://build.nvidia.com/arc/evo2-40b).
 
 - [Documentation](https://docs.nvidia.com/nim/bionemo/evo2/latest/overview.html)
 - [Quickstart](https://docs.nvidia.com/nim/bionemo/evo2/latest/quickstart-guide.html)
@@ -176,7 +183,7 @@ else:
 
 ### Very long sequences
 
-We are actively working on optimizing performance for long sequence processing. Vortex can currently compute over very long sequences via teacher prompting. However please note that forward pass on long sequences may currently be slow. 
+We are actively working on optimizing performance for long sequence processing. Vortex can currently compute over very long sequences via teacher prompting. However please note that forward pass on long sequences may currently be slow.
 
 ## Dataset
 

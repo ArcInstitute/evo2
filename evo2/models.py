@@ -1,6 +1,6 @@
 from functools import partial
 import huggingface_hub
-from huggingface_hub import hf_hub_download, constants
+from huggingface_hub import snapshot_download, constants, hf_hub_download
 import os
 import pkgutil
 import torch
@@ -173,9 +173,14 @@ class Evo2:
             model_name: str = MODEL_NAMES[1],
             config_path: str = None,
             local_path: str = None,
+            remove_shards: bool = True,
     ):
         """
         Load HuggingFace checkpoint using StripedHyena 2.
+
+        If local_path is specified, loads from local_path.
+        Otherwise, downloads from HuggingFace.
+        If remove_shards is True, removes HF checkpoint shards after merging to .pt file.
         """
         if local_path is not None:
             print(f"Loading model from {local_path}...")
@@ -187,49 +192,63 @@ class Evo2:
         
         hf_model_name = HF_MODEL_NAME_MAP[model_name]
         filename = f"{model_name}.pt"
-                
-        # First try normal download
-        try:
-            weights_path = hf_hub_download(
-                repo_id=hf_model_name,
-                filename=filename,
+        
+        final_weights_path = os.path.join(os.path.dirname(constants.HF_HUB_CACHE), filename)
+        if os.path.exists(final_weights_path):
+            print(f"Found existing merged file: {final_weights_path}")
+            weights_path = final_weights_path
+            
+            hf_hub_download(
+                repo_id=hf_model_name, 
+                filename="config.json"
             )
-        # If file is split, download and join parts
-        except:
-            print(f"Loading checkpoint shards for {filename}")
-            # If file is split, get the first part's directory to use the same cache location
-            weights_path = os.path.join(os.path.dirname(constants.HF_HUB_CACHE), filename)
-            if os.path.exists(weights_path):
-                print(f"Found {filename}")
+        else:
+            repo_dir = snapshot_download(
+                repo_id=hf_model_name,
+            )
+            
+            # Check if the complete file already exists in the repo
+            repo_weights_path = os.path.join(repo_dir, filename)
+            if os.path.exists(repo_weights_path):
+                print(f"Found complete file in repo: {filename}")
+                weights_path = repo_weights_path
             else:
-                # Download and join parts
+                print(f"Looking for checkpoint shards for {filename}")
                 parts = []
                 part_num = 0
+
                 while True:
-                    try:
-                        part_path = hf_hub_download(repo_id=hf_model_name, filename=f"{filename}.part{part_num}")
+                    part_path = os.path.join(repo_dir, f"{filename}.part{part_num}")
+                    if os.path.exists(part_path):
                         parts.append(part_path)
                         part_num += 1
-                    except huggingface_hub.errors.EntryNotFoundError:
+                    else:
                         break
-
-                # Join in the same directory 
-                with open(weights_path, 'wb') as outfile:
-                    for part in parts:
-                        with open(part, 'rb') as infile:
-                            while True:
-                                chunk = infile.read(8192*1024)
-                                if not chunk: break
-                                outfile.write(chunk)
                 
-                # Cleaning up the parts
-                for part in parts:
-                    try:
-                        os.remove(part)
-                    except OSError as e:
-                        print(f"Error removing {part}: {e}")
-                    print("Cleaned up shards, final checkpoint saved to", weights_path)
-
+                if parts:
+                    print(f"Found {len(parts)} shards, merging them...")
+                    with open(final_weights_path, 'wb') as outfile:
+                        for part in parts:
+                            print(f"Merging shard: {os.path.basename(part)}")
+                            with open(part, 'rb') as infile:
+                                while True:
+                                    chunk = infile.read(8192*1024)
+                                    if not chunk: 
+                                        break
+                                    outfile.write(chunk)
+                    
+                    print(f"Successfully merged all shards into {final_weights_path}")
+                    weights_path = final_weights_path
+                    if remove_shards and os.path.exists(final_weights_path):
+                        for part in parts:
+                            real_path = os.path.realpath(part)
+                            if os.path.exists(real_path):
+                                os.remove(real_path)
+                            if os.path.exists(part):
+                                os.remove(part)
+                else:
+                    raise FileNotFoundError(f"Could not find {filename} or any of its shards in {repo_dir}")
+                
         config = yaml.safe_load(pkgutil.get_data(__name__, config_path))
         global_config = dotdict(config, Loader=yaml.FullLoader)
 
