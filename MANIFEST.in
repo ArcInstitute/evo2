@@ -1,0 +1,9 @@
+include LICENSE
+include NOTICE
+include README.md
+include requirements.txt
+include pyproject.toml
+recursive-include evo2/configs *.yml
+recursive-include vortex/vortex *
+recursive-exclude vortex/vortex *.pyc
+recursive-exclude vortex/vortex/__pycache__ *

@@ -1,0 +1,2 @@
+biopython
+huggingface_hub
