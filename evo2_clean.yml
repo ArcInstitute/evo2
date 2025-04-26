@@ -1,0 +1,15 @@
+name: evo2
+channels:
+  - pytorch
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.11
+  - cuda-toolkit==12.4.1
+  - cuda-command-line-tools==12.4.1
+  - cuda-compiler==12.4.1
+  - cuda-runtime==12.4.1
+  - cuda-tools==12.4.1
+  - cuda-version==12.4
+  - cuda==12.4.1
+prefix: /home/tl688/.conda/envs/evo2
