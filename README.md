@@ -12,6 +12,7 @@ We describe Evo 2 in the preprint:
 - [Setup](#setup)
   - [Requirements](#requirements)
   - [Installation](#installation)
+  - [Docker and Singularity](#docker-and-singularity)
 - [Checkpoints](#checkpoints)
 - [Usage](#usage)
   - [Forward](#forward)
@@ -50,6 +51,37 @@ You can check that the installation was correct by running a test.
 
 ```
 python ./test/test_evo2.py --model_name evo2_7b
+```
+
+### Docker and Singularity
+
+You can also build and run Evo 2 using Docker.
+
+**Docker:**
+
+```bash
+docker build -t evo2 .
+docker run     -it     --rm     --gpus all     -v ./huggingface:/root/.cache/huggingface     evo2     bash
+```
+
+Once inside the container:
+
+```bash
+python3 ./test/test_evo2.py --model_name evo2_7b
+```
+
+**Singularity / Apptainer:**
+
+```bash
+docker build -t evo2 .
+singularity build evo2.sif docker-daemon://evo2:latest
+mkdir -p models
+```
+
+To run the model using the Singularity image:
+
+```bash
+singularity exec     --nv     --bind $PWD:/app     --bind ./models:/root/.cache/huggingface     ./evo2.sif     python3 ./test/test_evo2.py     --model_name evo2_7b
 ```
 
 ## Checkpoints
