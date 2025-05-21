@@ -1,6 +1,7 @@
 import argparse
 import csv
 from pathlib import Path
+from importlib import resources
 from typing import List, Optional, Union
 import numpy as np
 import torch
@@ -8,16 +9,26 @@ import torch.nn.functional as F
 
 from evo2 import Evo2
 
-def read_prompts(input_file: Path) -> Union[List[List[str]]]:
-    """Read prompts from input file."""
-    promptseqs: List[str] = []
+def read_prompts(input_file):
+    """Read prompts from input file or built-in test data.
     
+    Args:
+        input_file: Either a path to a file, or the name of a test data file
+                   (e.g., 'prompts.csv')
+    """
+    # If it's a string that doesn't exist as a file path, assume it's a test data file
+    if isinstance(input_file, str) and not Path(input_file).is_file():
+        # This is the reliable way to get package data
+        with resources.path('evo2.test.data', input_file) as data_path:
+            input_file = data_path
+    
+    # Your existing code to read the file
+    promptseqs = []
     with open(input_file, encoding='utf-8-sig', newline='') as csvfile:
         reader = csv.reader(csvfile)
         next(reader)  # Skip header
         for row in reader:
             promptseqs.append(row[0])
-
     return promptseqs
 
 def test_forward_pass(*, model, sequences):
