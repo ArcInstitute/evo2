@@ -24,7 +24,7 @@ mlp_init_method: torch.nn.init.zeros_
 mlp_output_init_method: torch.nn.init.zeros_
 eps: 0.000001
 state_size: 16
-rotary_emb_base: 100000000000
+rotary_emb_base: 10000
 rotary_emb_scaling_factor: 128
 use_interpolated_rotary_pos_emb: True
 make_vocab_size_divisible_by: 8
