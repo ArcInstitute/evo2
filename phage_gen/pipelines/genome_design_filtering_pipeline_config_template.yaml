@@ -1,0 +1,308 @@
+################################################
+### PHAGE GENOME DESIGN //FILTERING PIPELINE ###
+################################################
+#
+# Using a natural or generated sequence fasta as input, this config enables tunable filtering of genome design candidates
+# across a variety of design constraints, split across six sections (generally by increasing amount of compute and requirements).
+# Note that the design constraint categories described in the paper (quality control, tropism, diversification) are split up amongst these sections.
+# Depending on your search conditions, intermediate files are saved at every filtering step,
+# and the final output will have visualizations of annotated genome design candidates.
+#
+# Requirements:
+# - Environment equivalent to genome_design
+# - lovis4u environment equivalent to genome_visualization
+# - Config file with chosen parameters
+# - genetic_architecture.py in same directory
+# - genetic_architecture_visualization.py in same directory
+# - MMseqs databases created for any MMseqs search steps
+# - Local installation of Prodigal binary (if using Prodigal)
+# - CheckV database downloaded (if using CheckV)
+# - PHROGs database and annotation file downloaded
+#
+# Design constraints summary:
+#
+# 1. Initial clean-up:
+# -> End-of-sequence (EOS) trimming
+# -> ID overwriting
+# -> Unique identifier appending
+# -> Prompt prepending
+# -> Prompt removal
+#
+# 2. Nucleotide filtering: Filtering thresholds based on nucleotide-level metrics
+# -> Nucleotide characters
+# -> Genome length
+# -> GC content
+# -> Nucleotide homopolymers
+# -> Dinucleotide frequencies
+# -> Tetranucleotide usage deviation
+#
+# 3. Prodigal-based ORF filtering: Filtering thresholds based on Prodigal-predicted ORF metrics
+# -> ORF count
+# -> ORF lengths
+# -> Coding density
+# -> Amino acid homopolymers
+#
+# 4. Homology filtering: Filtering thresholds based on local or global sequence homology metrics
+# -> Protein sequence hit count against protein database (uses orfipy for more inclusive gene prediction) (MMseqs)
+# -> Sequence identity to training data genomes (MMseqs)
+# -> CheckV quality
+# -> Sequence identity to reference genome (global alignment)
+# -> Genetic architecture score (positively selected scores)
+# -> Tropism-conditioned search against reference protein (MMseqs)
+#
+# 5. Final diversification filtering: Filtering thresholds for diversifying final high-quality candidates
+# -> Clustering of redundant sequences (MMseqs)
+# -> Removal by sequence identity to reference genome (MMseqs)
+# -> Genetic architecture score (negatively selected scores)
+#
+# 6. Visualization and synteny filtering: Visualize genome annotations and filtering thresholds based on synteny to a reference genome
+# -> De novo genome annotation visualization, optionally against reference genome
+# -> Additional output file formats (gff, gbk)
+# -> Average amino acid sequence identity
+# -> Gene annotations
+# -> Syntenic gene count
+
+
+######################################
+### 1. SET INITIAL PARAMETERS HERE ###
+######################################
+
+# (!) Set your results directory, config file, and fasta file here
+results_save_dir: "/path/to/results_dir"
+current_config_file: "/path/to/genome_design_filtering_pipeline_config_template.yaml"
+evo_gen_seqs_fasta_file_save_location: "/path/to/all_phage_batches.fasta"
+
+keep_only_up_to_first_eos: true # Highly recommended, as sequences separated by an end-of-sequence token will otherwise be concatenated together
+
+overwrite_sequence_ids: true # If true, will fully replace sequence IDs with consecutive unique molecular identifiers (UMIs) umi_1, umi_2, etc.
+
+remove_prompt: false # Useful if sequences in fasta file contain unwanted prompting tokens prepended
+prompt_to_remove: "|r__Riboviria;k__"
+
+prepend_prompt: false # Useful if sequences were generated with special character + nucleotide prompts such as "+~GAGT" but you only want to prepend the nucleotides
+prompt: ""
+
+# Default results save directories:
+initialized_seqs_csv_file_save_location: "qc1_initial_seqs.csv"
+initialized_seqs_fasta_file_save_location: "qc1_initial_seqs.fasta"
+
+
+###################################################
+### 2. SET NUCLEOTIDE FILTERING PARAMETERS HERE ###
+###################################################
+
+nucleotide_filtering: true # (!) If false, no nucleotide filtering steps below will be performed
+
+nucleotide_character_filter: true
+
+genome_length_filter: true
+genome_length_range: [4000, 6000]
+
+gc_content_filter: true
+gc_content_range: [30, 65]
+
+nucleotide_homopolymer_filter: true
+nucleotide_homopolymer_length_range: [0, 10]
+
+dinucleotide_frequency_filter: false
+dinucleotide_frequency_range: [0, 20]
+
+tud_filter: false # Note that this filter can be highly constraining
+tetranucleotide: "GATC"
+tud_range: [0, 0.1]
+
+# Default results save directories:
+nucleotide_filter_counts_file_save_location: "qc2_nt_filter_counts.csv"
+nucleotide_filter_seqs_csv_file_save_location: "qc2_nt_filter_seqs.csv"
+nucleotide_filter_seqs_fasta_file_save_location: "qc2_nt_filter_seqs.fasta"
+
+
+###########################################################
+### 3. SET PRODIGAL-BASED ORF FILTERING PARAMETERS HERE ###
+###########################################################
+
+# NOTE: This set of filters is based on Prodigal ORF calling
+# Requires a local installation of the Prodigal binary which must be modified in genome_design_filtering_pipeline.py
+# Any filters after this section use our custom method for gene prediction
+
+orf_filtering: false # (!) If false, no ORF filtering steps below will be performed
+
+use_nucleotide_filtered_df: true # Uses the output dataframe from nucleotide filtering
+
+prodigal_based_filters: true # For filtering based on Prodigal-predicted ORFs, will run immediate steps below if true
+prodigal_orfs_file_save_location: "qc3_prodigal_orfs.fasta"
+prodigal_proteins_file_save_location: "qc3_prodigal_proteins.fasta"
+orf_count_filter: true
+orf_count_range: [0, 1000000]
+orf_lengths_filter: true
+orf_lengths_range: [0, 1000000] # in nucleotides
+coding_density_filter: true
+coding_density_range: [0, 1000000]
+aminoacid_homopolymer_length_filter: true
+aminoacid_homopolymer_length_range: [0, 1000000]
+
+# Default results save directories:
+orf_filter_counts_file_save_location: "qc3_orf_filter_counts.csv"
+orf_filter_seqs_csv_file_save_location: "qc3_orf_filter_seqs.csv"
+orf_filter_seqs_fasta_file_save_location: "qc3_orf_filter_seqs.fasta"
+
+
+#################################################
+### 4. SET HOMOLOGY FILTERING PARAMETERS HERE ###
+#################################################
+
+homology_filtering: true # (!) If false, no homology filtering steps below will be performed, must be on to run genome annotation visualization in step 6
+
+use_orf_filtered_df: false # Uses the output dataframe from ORF filtering
+use_nucleotide_filtered_df_instead: true # Uses the output dataframe from nucleotide filtering instead of from ORF filtering
+
+orfipy_threads: 96 # Match with allocated CPUs for full speed
+orfipy_strand: "f" # Strand to consider, use r for reverse, or b for both
+#orfipy_translation_table: 1 # Not necessary with custom start and stop codons defined
+orfipy_start_codons: "ATG" # Custom start codons to consider, can be multiple comma-separated start codons
+orfipy_stop_codons: "TAA,TGA,TAG" # Custom start codons to consider, can be multiple comma-separated start codons
+orfipy_min_max_orf_lengths: [90, 1800] # (nt)
+orfipy_orfs_file_save_location: "qc4_orfipy_orfs.fasta"
+orfipy_tmp_proteins_file_save_location: "qc4_orfipy_proteins_tmp.fasta"
+orfipy_proteins_file_save_location: "qc4_orfipy_proteins.fasta"
+homology_filter_seqs_circular_fasta_file_save_location: "qc4_homology_filter_seqs_pseudocircularized.fasta"
+# AVAILABLE TRANSLATION TABLES FOR ORFIPY:
+# Orfipy_Table_# Name Start Stop
+# 1 Standard (transl_table=1) [TTG,CTG,ATG] [TAA,TAG,TGA]
+# 2 Vertebrate Mitochondrial (transl_table=2) [ATT,ATC,ATA,ATG,GTG] [TAA,TAG,AGA,AGG]
+# 3 Yeast Mitochondrial (transl_table=3) [ATA,ATG] [TAA,TAG]
+# 4 Mold Mitochondrial; Protozoan Mitochondrial; Coelenterate Mitochondrial; Mycoplasma; Spiroplasma (transl_table=4) [TTA,TTG,CTG,ATT,ATC,ATA,ATG,GTG] [TAA,TAG]
+# 5 Invertebrate Mitochondrial (transl_table=5) [TTG,ATT,ATC,ATA,ATG,GTG] [TAA,TAG]
+# 6 Ciliate Nuclear; Dasycladacean Nuclear; Hexamita Nuclear (transl_table=6) [ATG] [TGA]
+# 7 Echinoderm Mitochondrial; Flatworm Mitochondrial (transl_table=9) [ATG,GTG] [TAA,TAG]
+# 8 Euplotid Nuclear (transl_table=10) [ATG] [TAA,TAG]
+# 9 Bacterial, Archaeal and Plant Plastid (transl_table=11) [TTG,CTG,ATT,ATC,ATA,ATG,GTG] [TAA,TAG,TGA]
+# 10 Alternative Yeast Nuclear (transl_table=12) [CTG,ATG] [TAA,TAG,TGA]
+# 11 Ascidian Mitochondrial (transl_table=13) [TTG,ATA,ATG,GTG] [TAA,TAG]
+# 12 Alternative Flatworm Mitochondrial (transl_table=14) [ATG] [TAG]
+# 13 Chlorophycean Mitochondrial (transl_table=16) [ATG] [TAA,TGA]
+# 14 Trematode Mitochondrial (transl_table=21) [ATG,GTG] [TAA,TAG]
+# 15 Scenedesmus obliquus Mitochondrial Code (transl_table=22) [ATG] [TCA,TAA,TGA]
+# 16 Thraustochytrium mitochondrial code (transl_table=23) [ATT,ATG,GTG] [TTA,TAA,TAG,TGA]
+# 17 Pterobranchia Mitochondrial (transl_table=24) [TTG,CTG,ATG,GTG] [TAA,TAG]
+# 18 Candidate Division SR1 and Gracilibacteria (transl_table=25) [TTG,ATG,GTG] [TAA,TAG]
+# 19 Pachysolen tannophilus Nuclear Code (transl_table=26) [CTG,ATG] [TAA,TAG,TGA]
+# 20 Karyorelict Nuclear (transl_table=27) [ATG] [TGA]
+# 21 Condylostoma Nuclear (transl_table=28) [ATG] [TAA,TAG,TGA]
+# 22 Mesodinium Nuclear (transl_table=29) [ATG] [TGA]
+# 23 Peritrich Nuclear (transl_table=30) [ATG] [TGA]
+
+# NOTE: Requires local download of the PHROGs database
+protein_database_hit_count_filter: true # Must be on to run genome annotation visualization in step 6
+mmseqs_threads: 96 # Match with allocated CPUs for full speed
+#mmseqs_db_protein_database: "/scratch/hielab/samuelking/uniprot_sprot/uniprot_sprot_microbes_mmseqs_db/uniprot_sprot_microbes_mmseqs_db"
+#mmseqs_db_protein_database: "/scratch/hielab/samuelking/uniprot_sprot/uniprot_sprot_trembl_microbes_mmseqs_db/uniprot_sprot_trembl_microbes_mmseqs_db"
+mmseqs_db_protein_database: "/path/to/phrogs_mmseqs_db/phrogs_mmseqs_db"
+mmseqs_protein_database_results_dir_save_location: "qc4_mmseqs_results_protein_database"
+mmseqs_protein_database_sensitivity: 4.0
+protein_database_hit_count: 7
+
+training_data_sequence_identity_filter: false
+training_data_genomes_fasta: "/path/to/microviridae_sft_training_data_raw.fna"
+mmseqs_training_data_results_dir_save_location: "qc4_mmseqs_results_training_data"
+mmseqs_training_data_sensitivity: 7.5
+training_data_sequence_identity_range: [0, 100]
+
+checkv_filter: false # NOTE: Requires local install of the CheckV database
+checkv_threads: 96 # Match with allocated CPUs for full speed
+checkv_quality_range: ["Low-quality", "Medium-quality", "High-quality", "Complete"]
+checkv_results_dir_save_location: "qc4_checkv_results"
+
+reference_genome_sequence_identity_filter: false # Note that this step is very slow because it uses a global alignment algorithm and not MMseqs
+reference_genome_fasta: "/path/to/NC_001422_1.fna"
+reference_genome_sequence_identity_range: [60, 100]
+
+genetic_architecture_filter: true # For keeping sequences within a specified genetic architecture score range, currently this needs to be run for genetic_architecture_remove_filter to work
+genetic_architecture_reference_genome: "/path/to/NC_001422_1.fna" # Note that genetic architecture similarity scoring is currently hard-coded to compare against PhiX174
+genetic_architecture_score_range: [0, 10]
+
+tropism_protein_sequence_identity_filter: true
+reference_tropism_protein: "/path/to/NC_001422.1_Gprotein.fasta"
+mmseqs_db_tropism_protein: "/path/to/mmseqs_db_NC_001422_1_Gprotein/mmseqs_db_NC_001422_1_Gprotein"
+mmseqs_tropism_protein_results_dir_save_location: "qc4_mmseqs_results_tropism_protein"
+mmseqs_tropism_protein_sensitivity: 4.0
+tropism_protein_sequence_identity_range: [60, 100]
+
+# Default results save directories:
+homology_filter_counts_file_save_location: "qc4_homology_filter_counts.csv"
+homology_filter_seqs_csv_file_save_location: "qc4_homology_filter_seqs.csv"
+homology_filter_seqs_fasta_file_save_location: "qc4_homology_filter_seqs.fasta"
+
+
+##############################################################
+### 5. SET FINAL DIVERSIFICATION FILTERING PARAMETERS HERE ###
+##############################################################
+
+diversification_filtering: false # (!) If false, no diversification filtering steps below will be performed
+
+use_homology_filtered_df: true # Uses the output dataframe from homology filtering
+use_orf_filtered_df_instead: false # Uses the output dataframe from ORF filtering
+use_nucleotide_filtered_df_instead_2: false # Uses the output dataframe from nucleotide filtering instead of from ORF filtering
+
+mmseqs_clustering_filter: false # For clustering sequences above a specified sequence identity threshold
+mmseqs_clustering_min_sequence_identity: 0.99
+mmseqs_clustering_results_dir_save_location: "qc5_mmseqs_results_clustering"
+
+mmseqs_reference_genome_sequence_identity_remove_filter: false # Uses reference_genome_fasta from homology filtering
+mmseqs_reference_genome_sequence_identity_keep_range: [0, 98.9]
+mmseqs_reference_genome_sensitivity: 7.5
+mmseqs_reference_genome_results_dir_save_location: "qc5_mmseqs_results_reference_genome"
+
+genetic_architecture_remove_filter: true # For removing sequences within a specified genetic architecture score range, genetic_architecture_filter needs to be run before this
+genetic_architecture_score_mode: "genome" # If "compound", the score used will be the product of the genome and entangled module scores; if "genome", the score used will be for only the genome
+genetic_architecture_score_range_to_remove: [0.9, 1.1]
+
+# Default results save directories:
+diversification_filter_counts_file_save_location: "qc5_diversification_filter_counts.csv"
+diversification_filter_seqs_csv_file_save_location: "qc5_diversification_filter_seqs.csv"
+diversification_filter_seqs_fasta_file_save_location: "qc5_diversification_filter_seqs.fasta"
+
+
+##############################################################
+### 6. SET FINAL VISUALIZATION AND SYNTENY PARAMETERS HERE ###
+##############################################################
+
+genetic_architecture_visualization_and_synteny_filtering: true # Note that homology filtering with orfipy and protein database hits must be run before this
+
+genetic_architecture_visualization_script: "/path/to/genetic_architecture_visualization.py"
+
+# Protein database to use for gene annotations
+# Note: the protein annotation database should not contain semicolons in any annotation, otherwise it will cause bugs in gff attribute interpretation
+protein_annotation_file: "/path/to/phrog_annot_v4.tsv" # For phage proteins
+
+# Set lovis4u Conda environment to use
+lovis4u_conda_env: "genome_visualization"
+
+# Set reference genome gff to use (note: if you don't have this, you can generate the gff using this same pipeline!)
+use_reference_genome: false
+reference_genome_gff_file_save_location: "/path/to/NC_001422.1_pseudocircular.gff"
+
+average_protein_sequence_identity_filter: false # For filtering sequences with an average MMseqs percent identity across their proteins
+average_protein_sequence_identity_range: [0, 95]
+
+required_genes_filter: false # For filtering sequences with exact specified genes (designated by their annotations in the 'product=...' feature in their GFF file)
+required_genes_list: ["terminase", "endolysin", "major spike protein", "DNA replication initiation", "DNA condensation", "major head protein", "head morphogenesis", "nan", "head morphogenesis", "pilot protein for DNA ejection", "DNA replication initiation"]
+
+syntenic_gene_count_filter: false # Filters sequences with every combination of syntenic genes and total genes specified below; by default uses the reference genome above
+syntenic_gene_count_range: [10, 12]
+total_gene_count_range: [10, 12]
+syntenic_total_gene_count_remove: # Leave with at least one item
+- [11, 11]
+# Format is
+# - [syntenic genes, total genes]
+# - [syntenic genes, total genes]
+# ...
+
+# Default results save directories:
+gff_dir_save_location: "qc6_gff_files"
+gbk_dir_save_location: "qc6_gbk_files"
+genetic_architecture_visualization_dir_save_location: "qc6_genetic_architecture_visualization_metadata"
+genetic_architecture_visualization_pdf_dir_save_location: "qc6_genetic_architecture_visualization_pdfs"
+synteny_filter_counts_file_save_location: "qc6_synteny_filter_counts.csv"
+synteny_filter_seqs_csv_file_save_location: "qc6_synteny_filter_seqs.csv"
+synteny_filter_seqs_fasta_file_save_location: "qc6_synteny_filter_seqs.fasta"
