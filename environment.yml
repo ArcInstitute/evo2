@@ -1,0 +1,16 @@
+name: evo2
+channels:
+  - nvidia
+  - conda-forge
+  - pytorch
+  - defaults
+dependencies:
+  - python=3.12
+  - pip
+  - pytorch=2.5.1
+  - pytorch-cuda=12.1
+  - transformer-engine-torch=2.3.0
+  - flash-attn=2.8.0.post2
+  - pip:
+      - vtx>=0.0.8
+      - evo2
