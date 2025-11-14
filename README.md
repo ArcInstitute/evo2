@@ -118,20 +118,6 @@ Some common installation errors and suggested fixes:
   Make sure the PyTorch extension for Transformer Engine is installed, for example:
   ```bash
   pip install "transformer_engine[pytorch]"
-  or follow the installation instructions from the Transformer Engine documentation.
-  
-  - `ModuleNotFoundError: No module named 'vortex'`  
-  Install the Vortex package (published as `vtx` on PyPI), for example:
-
-  ```bash
-  pip install "vtx>=0.0.8"
-
-  - Errors mentioning `libnvrtc` or `Could not find shared object file for Transformer Engine torch lib`  
-  These errors typically indicate a mismatch between CUDA, PyTorch, and Transformer Engine versions, or that CUDA libraries are not available in your `LD_LIBRARY_PATH`. We recommend:
-
-  - using the same CUDA and PyTorch versions as in `environment.yml`,
-  - checking that your NVIDIA drivers and CUDA toolkit satisfy the requirements listed in the README,
-  - consulting the Transformer Engine and Vortex documentation for environment-specific installation details.
 
 ## Usage
 
