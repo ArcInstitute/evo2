@@ -84,6 +84,16 @@ For the 40b model:
 ```
 python -m evo2.test.test_evo2_generation --model_name evo2_40b
 ```
+### Example conda environment
+
+For users who prefer a reproducible setup, we provide an example conda environment file (`environment.yml`) that pins Python, CUDA, PyTorch, Transformer Engine, FlashAttention and Vortex.
+
+You can create and activate the environment with:
+
+```bash
+conda env create -f environment.yml
+conda activate evo2
+python -m evo2.test.test_evo2_generation --model_name evo2_7b
 
 ### Docker
 
@@ -100,6 +110,28 @@ Once inside the container:
 ```bash
 python -m evo2.test.test_evo2_generation --model_name evo2_7b
 ```
+### Troubleshooting (installation)
+
+Some common installation errors and suggested fixes:
+
+- `ModuleNotFoundError: No module named 'transformer_engine'`  
+  Make sure the PyTorch extension for Transformer Engine is installed, for example:
+  ```bash
+  pip install "transformer_engine[pytorch]"
+  or follow the installation instructions from the Transformer Engine documentation.
+  
+  - `ModuleNotFoundError: No module named 'vortex'`  
+  Install the Vortex package (published as `vtx` on PyPI), for example:
+
+  ```bash
+  pip install "vtx>=0.0.8"
+
+  - Errors mentioning `libnvrtc` or `Could not find shared object file for Transformer Engine torch lib`  
+  These errors typically indicate a mismatch between CUDA, PyTorch, and Transformer Engine versions, or that CUDA libraries are not available in your `LD_LIBRARY_PATH`. We recommend:
+
+  - using the same CUDA and PyTorch versions as in `environment.yml`,
+  - checking that your NVIDIA drivers and CUDA toolkit satisfy the requirements listed in the README,
+  - consulting the Transformer Engine and Vortex documentation for environment-specific installation details.
 
 ## Usage
 
