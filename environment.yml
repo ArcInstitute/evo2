@@ -10,7 +10,7 @@ dependencies:
   - pytorch=2.5.1
   - pytorch-cuda=12.1
   - transformer-engine-torch=2.3.0
-  - flash-attn=2.8.0.post2
   - pip:
+      - flash-attn==2.8.0.post2 --no-build-isolation
       - vtx>=0.0.8
       - evo2
