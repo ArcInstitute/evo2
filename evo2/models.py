@@ -248,11 +248,18 @@ class Evo2:
                                 os.remove(part)
                 else:
                     raise FileNotFoundError(f"Could not find {filename} or any of its shards in {repo_dir}")
-                
+               
         config = yaml.safe_load(pkgutil.get_data(__name__, config_path))
-        global_config = dotdict(config, Loader=yaml.FullLoader)
+        config = dotdict(config)
+        # ---- LOCAL PATCH: disable TE / FP8 / Flash for consumer GPUs ----
+        config.use_fp8_input_projections = False
+        config.use_flash_attn = False
+        config.use_flash_rmsnorm = False
+        config.use_flash_depthwise = False
+        config.use_flashfft = False
+        # ---------------------------------------------------------------
 
-        model = StripedHyena(global_config)
+        model = StripedHyena(config)
         load_checkpoint(model, weights_path)
 
         return model

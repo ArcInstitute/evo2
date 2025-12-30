@@ -1,0 +1,5 @@
+biopython
+huggingface_hub
+torch
+transformer_engine>=2.0.0
+vtx>=0.0.8
