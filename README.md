@@ -7,9 +7,6 @@ Evo 2 is a state of the art DNA language model for long context modeling and des
 We describe Evo 2 in the preprint:
 ["Genome modeling and design across all domains of life with Evo 2"](https://www.biorxiv.org/content/10.1101/2025.02.18.638918v1).
 
-<!-- Blockquote -->
-> **New:** [Evo 2 20B](https://huggingface.co/arcinstitute/evo2_20b) checkpoint released
-
 ## Contents
 
 - [Setup](#setup)
