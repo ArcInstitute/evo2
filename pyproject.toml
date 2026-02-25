@@ -1,10 +1,14 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "evo2"
-version = "0.3.0"
+version = "0.5.0"
 description = "Genome modeling across all domains of life"
 readme = "README.md"
 requires-python = ">=3.11,<3.13"
-license = "Apache-2.0"
+license = {file = "LICENSE"}
 authors = [
     {name = "Evo 2 Team"},
 ]
@@ -12,7 +16,6 @@ dependencies = [
     "biopython",
     "huggingface_hub",
     "torch",
-    "transformer_engine>=2.0.0",
     "vtx>=0.0.8",
 ]
 

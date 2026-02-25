@@ -7,6 +7,9 @@ Evo 2 is a state of the art DNA language model for long context modeling and des
 We describe Evo 2 in the preprint:
 ["Genome modeling and design across all domains of life with Evo 2"](https://www.biorxiv.org/content/10.1101/2025.02.18.638918v1).
 
+<!-- Blockquote -->
+> **New:** [Evo 2 20B](https://huggingface.co/arcinstitute/evo2_20b) checkpoint released
+
 ## Contents
 
 - [Setup](#setup)
@@ -80,8 +83,10 @@ To verify that the installation was correct:
 python -m evo2.test.test_evo2_generation --model_name evo2_7b
 ```
 
-For the 40b model:
+For the 20b or 40b models:
 ```
+python -m evo2.test.test_evo2_generation --model_name evo2_20b
+
 python -m evo2.test.test_evo2_generation --model_name evo2_40b
 ```
 
@@ -108,15 +113,16 @@ python -m evo2.test.test_evo2_generation --model_name evo2_7b
 We provide the following model checkpoints, hosted on [HuggingFace](https://huggingface.co/arcinstitute):
 | Checkpoint Name                        | Description |
 |----------------------------------------|-------------|
+| `evo2_40b`  | 40B parameter model with 1M context |
+| `evo2_20b`  | 20B parameter model with 1M context |
 | `evo2_7b`  | 7B parameter model with 1M context |
-| `evo2_40b`  | 40B parameter model with 1M context (requires multiple GPUs) |
-| `evo2_7b_base`  | 7B parameter model with 8K context |
 | `evo2_40b_base`  | 40B parameter model with 8K context |
+| `evo2_7b_base`  | 7B parameter model with 8K context |
 | `evo2_1b_base`  | Smaller 1B parameter model with 8K context |
 | `evo2_7b_262k`  | 7B parameter model with 262K context |
 | `evo2_7b_microviridae`  | 7B parameter base model fine-tuned on Microviridae genomes |
 
-**Note:** The 40B model requires multiple GPUs. Vortex automatically handles device placement, splitting the model across available CUDA devices.
+**Note:** The 40B model requires multiple H100 GPUs. Vortex automatically handles device placement, splitting the model across available CUDA devices.
 
 ### Forward
 

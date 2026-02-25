@@ -185,7 +185,8 @@ class Evo2:
         if local_path is not None:
             print(f"Loading model from {local_path}...")
             print(f"Loading config from {config_path}...")
-            config = dotdict(yaml.load(open(config_path), Loader=yaml.FullLoader))
+            config = yaml.safe_load(pkgutil.get_data(__name__, config_path))
+            config = dotdict(config)
             model = StripedHyena(config)
             load_checkpoint(model, local_path)
             return model

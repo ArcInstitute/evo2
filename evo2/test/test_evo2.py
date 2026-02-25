@@ -79,9 +79,10 @@ def main():
     - Evo 2 40B 1m: Loss ~0.216, Accuracy ~91.67%
     - Evo 2 7B 1m: Loss ~0.348, Accuracy ~86.35%
     - Evo 2 1B base: Loss ~0.502, Accuracy ~79.56%
+    - Evo 2 20B: Loss ~0.217, Accuracy ~91.67%
     """
     parser = argparse.ArgumentParser(description="Test Evo2 Model Forward Pass")
-    parser.add_argument("--model_name", choices=['evo2_7b', 'evo2_40b', 'evo2_7b_base', 'evo2_40b_base', 'evo2_1b_base'], 
+    parser.add_argument("--model_name", choices=['evo2_7b', 'evo2_40b', 'evo2_7b_base', 'evo2_40b_base', 'evo2_1b_base', 'evo2_20b'],
                        default='evo2_7b',
                        help="Model to test")
     
@@ -116,7 +117,8 @@ def main():
         'evo2_7b': {'loss': 0.3476563, 'acc': 86.346},
         'evo2_40b_base': {'loss': 0.2149658, 'acc': 91.741},
         'evo2_7b_base': {'loss': 0.3520508, 'acc': 85.921},
-        'evo2_1b_base': {'loss': 0.501953125, 'acc': 79.556}
+        'evo2_1b_base': {'loss': 0.501953125, 'acc': 79.556},
+        'evo2_20b': {'loss': 0.2166748046875, 'acc': 91.666}
     }
     
     expected = expected_metrics[args.model_name]

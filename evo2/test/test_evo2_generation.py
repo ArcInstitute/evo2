@@ -90,13 +90,17 @@ def main():
     - Evo 2 40B 1m: 91.15%
     - Evo 2 7B 1m: 89.25% 
     - Evo 2 1B base: 68.0%
+    - Evo 2 20B 1m: 93.4%
     """
     parser = argparse.ArgumentParser(description="Test Evo2 Model Generation")
-    parser.add_argument("--model_name", choices=['evo2_7b', 'evo2_40b', 'evo2_1b_base'], default='evo2_7b',
-                       help="Model to test (supports evo2_7b, evo2_40b, evo2_1b_base)")
+    parser.add_argument("--model_name", choices=['evo2_7b', 'evo2_40b', 'evo2_1b_base', 'evo2_20b'], default='evo2_7b',
+                       help="Model to test (supports evo2_7b, evo2_40b, evo2_1b_base, evo2_20b)")
     
     args = parser.parse_args()
     
+    # Reduce CUDA memory fragmentation for large models (e.g. evo2_20b)
+    torch.cuda.memory._set_allocator_settings('expandable_segments:True')
+
     # Set random seeds
     torch.manual_seed(1)
     torch.cuda.manual_seed(1)
@@ -130,7 +134,8 @@ def main():
     expected_scores = {
         'evo2_40b': 91.15,
         'evo2_7b': 89.25,
-        'evo2_1b_base': 68.0
+        'evo2_1b_base': 68.0,
+        'evo2_20b': 93.4
     }
     
     expected_score = expected_scores[args.model_name]

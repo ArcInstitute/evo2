@@ -1,6 +1,7 @@
 MODEL_NAMES = [
     'evo2_40b',
     'evo2_7b',
+    'evo2_20b',
     'evo2_40b_base',
     'evo2_7b_base',
     'evo2_1b_base',
@@ -11,6 +12,7 @@ MODEL_NAMES = [
 HF_MODEL_NAME_MAP = {
     'evo2_40b': 'arcinstitute/evo2_40b',
     'evo2_7b': 'arcinstitute/evo2_7b',
+    'evo2_20b': 'arcinstitute/evo2_20b',
     'evo2_40b_base': 'arcinstitute/evo2_40b_base',
     'evo2_7b_base': 'arcinstitute/evo2_7b_base',
     'evo2_1b_base': 'arcinstitute/evo2_1b_base',
@@ -21,6 +23,7 @@ HF_MODEL_NAME_MAP = {
 CONFIG_MAP = {
     'evo2_7b': 'configs/evo2-7b-1m.yml',
     'evo2_40b': 'configs/evo2-40b-1m.yml',
+    'evo2_20b': 'configs/evo2-20b-1m.yml',
     'evo2_7b_base': 'configs/evo2-7b-8k.yml',
     'evo2_40b_base': 'configs/evo2-40b-8k.yml',
     'evo2_1b_base': 'configs/evo2-1b-8k.yml',
