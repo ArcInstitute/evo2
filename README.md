@@ -93,6 +93,16 @@ pip install -e .
 ```bash
 python -m evo2.test.test_evo2_generation --model_name evo2_7b  # or evo2_1b_base, evo2_20b, evo2_40b
 ```
+### Example conda environment
+
+For users who prefer a reproducible setup, we provide an example conda environment file (`environment.yml`) that pins Python, CUDA, PyTorch, Transformer Engine, FlashAttention and Vortex.
+
+You can create and activate the environment with:
+
+```bash
+conda env create -f environment.yml
+conda activate evo2
+python -m evo2.test.test_evo2_generation --model_name evo2_7b
 
 ### Docker
 
@@ -109,6 +119,14 @@ Once inside the container:
 ```bash
 python -m evo2.test.test_evo2_generation --model_name evo2_7b
 ```
+### Troubleshooting (installation)
+
+Some common installation errors and suggested fixes:
+
+- `ModuleNotFoundError: No module named 'transformer_engine'`  
+  Make sure the PyTorch extension for Transformer Engine is installed, for example:
+  ```bash
+  pip install "transformer_engine[pytorch]"
 
 ## Usage
 
