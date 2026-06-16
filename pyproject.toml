@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "evo2"
-version = "0.5.5"
+version = "0.6.0"
 description = "Genome modeling across all domains of life"
 readme = "README.md"
 requires-python = ">=3.11,<3.13"
@@ -16,7 +16,7 @@ dependencies = [
     "biopython",
     "huggingface_hub",
     "torch",
-    "vtx>=0.0.8",
+    "vtx>=1.1.0",
 ]
 
 [project.urls]

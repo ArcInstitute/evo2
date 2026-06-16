@@ -24,7 +24,7 @@ from evo2.scoring import score_sequences, score_sequences_rc
 from evo2.utils import MODEL_NAMES, HF_MODEL_NAME_MAP, CONFIG_MAP
 
 class Evo2:
-    def __init__(self, model_name: str = MODEL_NAMES[1], local_path: str = None):
+    def __init__(self, model_name: str = MODEL_NAMES[1], local_path: str = None, use_kernels: bool = False):
         """
         Load an Evo 2 checkpoint.
 
@@ -35,6 +35,11 @@ class Evo2:
         multiple GPUs if available.
         For models split across multiple GPUs, you can specify which GPUs to use with
         CUDA_VISIBLE_DEVICES. If using multi-gpu, do not use .to(device) manually.
+
+        use_kernels enables Vortex's opt-in Triton kernels for the Hyena short/medium/long
+        convolutions (HC{S,M,L}), which can accelerate inference. Requires vtx>=1.1.0 and is
+        off by default. The kernels fall back to the standard path if unavailable; always
+        validate outputs when enabling them.
 
         Notes:
         Evo 2 40b is too large to fit on a single H100 GPU, so needs multiple GPUs.
@@ -50,9 +55,9 @@ class Evo2:
         config_path = CONFIG_MAP[model_name]
 
         if local_path is not None:
-            self.model = self.load_evo2_model(None, config_path, local_path)
+            self.model = self.load_evo2_model(None, config_path, local_path, use_kernels=use_kernels)
         else:
-            self.model = self.load_evo2_model(model_name, config_path)
+            self.model = self.load_evo2_model(model_name, config_path, use_kernels=use_kernels)
         
         self.tokenizer = CharLevelTokenizer(512)
     
@@ -181,6 +186,7 @@ class Evo2:
             config_path: str = None,
             local_path: str = None,
             remove_shards: bool = True,
+            use_kernels: bool = False,
     ):
         """
         Load HuggingFace checkpoint using StripedHyena 2.
@@ -210,6 +216,12 @@ class Evo2:
                         f"Install with: pip install transformer_engine\n"
                         f"For inference without TE, use any 7b model: Evo2('evo2_7b')"
                     )
+
+            if use_kernels:
+                # Enable Vortex's opt-in Triton HC{S,M,L} inference kernels.
+                config.use_hcs_kernel = True
+                config.use_hcm_kernel = True
+                config.use_hcl_kernel = True
 
             model = StripedHyena(config)
             load_checkpoint(model, local_path)
@@ -291,6 +303,12 @@ class Evo2:
                     f"Install with: pip install transformer_engine\n"
                     f"For inference without TE, use any 7b model: Evo2('evo2_7b')"
                 )
+
+        if use_kernels:
+            # Enable Vortex's opt-in Triton HC{S,M,L} inference kernels.
+            global_config.use_hcs_kernel = True
+            global_config.use_hcm_kernel = True
+            global_config.use_hcl_kernel = True
 
         model = StripedHyena(global_config)
         load_checkpoint(model, weights_path)
