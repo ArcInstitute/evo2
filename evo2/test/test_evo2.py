@@ -85,6 +85,8 @@ def main():
     parser.add_argument("--model_name", choices=['evo2_7b', 'evo2_40b', 'evo2_7b_base', 'evo2_40b_base', 'evo2_1b_base', 'evo2_20b'],
                        default='evo2_7b',
                        help="Model to test")
+    parser.add_argument("--use_kernels", action="store_true",
+                       help="Enable Vortex opt-in Triton HC{S,M,L} inference kernels (requires vtx>=1.1.0)")
     
     args = parser.parse_args()
     
@@ -93,7 +95,7 @@ def main():
     torch.cuda.manual_seed(1)
     
     # Initialize model
-    model = Evo2(args.model_name)
+    model = Evo2(args.model_name, use_kernels=args.use_kernels)
     
     # Read sequences
     sequences = read_prompts('prompts.csv')

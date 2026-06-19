@@ -1,0 +1,5 @@
+model,display,params_billions,prokaryote_mean,eukaryote_mean,overall_mean_aa_recovery,paper_reported
+evo2_1b_base,1B base,1.0,64.85,50.35,55.18,55.2
+evo2_7b,7B,7.0,78.67,67.43,71.17,71.2
+evo2_20b,20B,20.0,90.89,79.53,83.32,83.6
+evo2_40b,40B,40.0,91.95,83.35,86.21,86.9

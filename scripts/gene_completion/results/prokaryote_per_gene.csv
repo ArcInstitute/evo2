@@ -1,0 +1,17 @@
+model,gene,organism,n_samples,mean_aa_recovery,sem_aa_recovery
+evo2_1b_base,ftsZ,Haloferax volcanii,30,67.7833,1.7205
+evo2_1b_base,secY,Haloferax volcanii,10,32.436,1.4259
+evo2_1b_base,dnaK,Escherichia coli,30,83.6653,2.0052
+evo2_1b_base,gyrA,Escherichia coli,30,75.5083,1.4963
+evo2_7b,ftsZ,Haloferax volcanii,30,79.1537,1.4911
+evo2_7b,secY,Haloferax volcanii,10,57.6518,4.1411
+evo2_7b,dnaK,Escherichia coli,30,94.0526,0.2756
+evo2_7b,gyrA,Escherichia coli,30,83.8132,1.947
+evo2_20b,ftsZ,Haloferax volcanii,50,92.3305,0.1665
+evo2_20b,secY,Haloferax volcanii,50,76.9164,1.3715
+evo2_20b,dnaK,Escherichia coli,50,96.6269,0.0714
+evo2_20b,gyrA,Escherichia coli,50,97.6699,0.1631
+evo2_40b,ftsZ,Haloferax volcanii,18,92.286,0.3952
+evo2_40b,secY,Haloferax volcanii,6,81.632,1.1077
+evo2_40b,dnaK,Escherichia coli,12,96.534,0.1266
+evo2_40b,gyrA,Escherichia coli,12,97.3549,0.3383

@@ -132,6 +132,21 @@ We provide the following model checkpoints, hosted on [HuggingFace](https://hugg
 
 **Note:** The 40B model requires multiple H100 GPUs. Vortex automatically handles device placement, splitting the model across available CUDA devices.
 
+**Optional: Triton inference kernels**
+
+Evo 2 can dispatch Triton kernels from [Vortex PR #77](https://github.com/Zymrael/vortex/pull/77). They require `vtx>=1.1.0`. Enable them when loading a model for faster inference:
+
+```python
+from evo2 import Evo2
+evo2_model = Evo2('evo2_7b', use_kernels=True) # enable inference kernels
+```
+
+to test, pass `--use_kernels` to the test scripts:
+
+```bash
+python -m evo2.test.test_evo2_generation --model_name evo2_7b --use_kernels
+```
+
 ### Forward
 
 Evo 2 can be used to score the likelihoods across a DNA sequence.
