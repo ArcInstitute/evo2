@@ -83,8 +83,12 @@ def _score_sequences(
     else:
         raise ValueError(f'Invalid reduce_method {reduce_method}')
 
+    # Without a BOS token the first nucleotide is not predicted, so a sequence of
+    # length L has L - 1 logprobs. Slicing further would include padding tokens.
+    n_scored = [ max(0, seq_length - 1 + int(prepend_bos)) for seq_length in seq_lengths ]
+
     return [
-        reduce_func(logprobs[idx][:seq_lengths[idx]])
+        reduce_func(logprobs[idx][:n_scored[idx]])
         for idx in range(len(seq_lengths))
     ]
 
