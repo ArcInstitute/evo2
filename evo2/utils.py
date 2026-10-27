@@ -34,7 +34,7 @@ CONFIG_MAP = {
 
 def make_phylotag_from_gbif(
         species_name: str,
-) -> dict:
+) -> str | None:
     """
     Returns phylogenetic tags for a given species, to get new tags not in the metadata
     """
@@ -56,9 +56,10 @@ def make_phylotag_from_gbif(
             }
         else:
             print(f"Could not find taxonomy for {species_name}")
+            return None
 
     taxonomy = get_taxonomy_from_gbif(species_name)
-    if taxonomy:
+    if taxonomy and all(taxonomy.values()):
         phylo_tag = (
         f'd__{taxonomy["kingdom"]};'
         f'p__{taxonomy["phylum"]};'
@@ -71,6 +72,7 @@ def make_phylotag_from_gbif(
         phylo_tag = '|'+phylo_tag+'|'
     else:
         print(f"Could not find taxonomy for {species_name}")
+        return None
 
     return phylo_tag.upper()
 
