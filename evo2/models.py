@@ -3,6 +3,7 @@ import huggingface_hub
 from huggingface_hub import snapshot_download, constants, hf_hub_download
 import os
 import pkgutil
+import tempfile
 import torch
 from typing import List, Tuple, Dict, Union
 import warnings
@@ -264,15 +265,20 @@ class Evo2:
                 
                 if parts:
                     print(f"Found {len(parts)} shards, merging them...")
-                    with open(final_weights_path, 'wb') as outfile:
-                        for part in parts:
-                            print(f"Merging shard: {os.path.basename(part)}")
-                            with open(part, 'rb') as infile:
-                                while True:
-                                    chunk = infile.read(8192*1024)
-                                    if not chunk: 
-                                        break
-                                    outfile.write(chunk)
+                    # Publish only a complete checkpoint. Interrupted merges must not
+                    # be mistaken for reusable merged files on the next load.
+                    with tempfile.TemporaryDirectory(dir=os.path.dirname(final_weights_path)) as temp_dir:
+                        temp_weights_path = os.path.join(temp_dir, filename)
+                        with open(temp_weights_path, 'wb') as outfile:
+                            for part in parts:
+                                print(f"Merging shard: {os.path.basename(part)}")
+                                with open(part, 'rb') as infile:
+                                    while True:
+                                        chunk = infile.read(8192*1024)
+                                        if not chunk:
+                                            break
+                                        outfile.write(chunk)
+                        os.replace(temp_weights_path, final_weights_path)
                     
                     print(f"Successfully merged all shards into {final_weights_path}")
                     weights_path = final_weights_path
